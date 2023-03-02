@@ -1,7 +1,7 @@
 FROM nvidia/cuda:11.7.1-runtime-ubuntu22.04
   
 # To use a different model, change the model URL below:
-ARG MODEL_URL='https://huggingface.co/PeggyWang/openjourney-v2/resolve/main/openjourney-v2.ckpt'
+ARG MODEL_URL='https://huggingface.co/Inzamam567/useless_Chillout_mix/resolve/main/chilloutmix_NiPrunedFp32Fix.safetensors'
 
 # If you are using a private Huggingface model (sign in required to download) insert your Huggingface
 # access token (https://huggingface.co/settings/tokens) below:
@@ -20,6 +20,11 @@ RUN git clone https://github.com/AUTOMATIC1111/stable-diffusion-webui.git && \
     git checkout 3e0f9a75438fa815429b5530261bcf7d80f3f101
 WORKDIR /app/stable-diffusion-webui
 
+RUN mkdir -p models/Lora/Korean_Doll_Likeness
+RUN wget -O models/Lora/Korean_Doll_Likeness/koreanDollLikeness_v10.safetensors 'https://huggingface.co/nsmaomao/azoila/resolve/main/koreanDollLikeness_v10.safetensors'
+RUN mkdir -p models/Lora/Taiwan_Doll_Likeness
+RUN wget -O models/Lora/Taiwan_Doll_Likeness/taiwanDollLikeness_v10.safetensors 'https://huggingface.co/nsmaomao/azoila/resolve/main/taiwanDollLikeness_v10.safetensors'
+
 ENV MODEL_URL=${MODEL_URL}
 ENV HF_TOKEN=${HF_TOKEN}
 
@@ -34,6 +39,9 @@ ADD download.py download.py
 RUN python download.py --use-cpu=all
 
 RUN pip install dill
+
+RUN rm -rf webui.py
+ADD webui.py webui.py
 
 RUN mkdir -p extensions/banana/scripts
 ADD script.py extensions/banana/scripts/banana.py
